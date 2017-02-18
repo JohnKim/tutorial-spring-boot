@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="gsshop.web.jbp.security.mapper.UserMapper">
+
+	<select id="readUser" parameterType="String" resultType="gsshop.web.jbp.security.dto.User">
+		SELECT username
+		     , password
+		     , name
+		     , isAccountNonExpired
+		     , isAccountNonLocked
+		     , isCredentialsNonExpired
+		     , isEnabled
+		     , failCount 
+		  FROM USER 
+		 WHERE username = #{username}
+	</select>
+
+	<select id="readAuthority" parameterType="String" resultType="String">
+		SELECT 'TEMP' FROM USER WHERE username = #{username}
+	</select>
+	
+	<update id="updateFailCount" parameterType="String">
+	   UPDATE USER SET failCount = (failCount + 1) WHERE username = #{username}
+	</update>
+	
+	<update id="resetFailCount" parameterType="String">
+	   UPDATE USER SET failCount = 0 WHERE username = #{username}
+	</update>
+	
+	<insert id="createUser" parameterType="gsshop.web.jbp.security.dto.User">
+		INSERT INTO USER (username, password, name, isAccountNonExpired,isAccountNonLocked, isCredentialsNonExpired, isEnabled)
+		VALUES (#{username}, #{password}, #{name}, #{isAccountNonExpired}, #{isAccountNonLocked}, #{isCredentialsNonExpired}, #{isEnabled})
+	</insert>
+
+	<insert id="createAuthority" parameterType="String">
+		INSERT INTO AUTHORITY (username, authorityName)
+		VALUES
+		<foreach item="authority" index="index" collection="authorities"
+			separator=",">
+			(#{username}, #{authority})
+		</foreach>
+	</insert>
+
+</mapper>
